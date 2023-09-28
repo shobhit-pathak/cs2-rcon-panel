@@ -132,20 +132,20 @@
         e.preventDefault(); // Prevent the default form submission
 
         // Get input values
-        const serverIP = $('#serverIP').val();
-        const serverPort = $('#serverPort').val();
-        const rconPassword = $('#rconPassword').val();
+        const server_ip = $('#serverIP').val();
+        const server_port = $('#serverPort').val();
+        const rcon_password = $('#rconPassword').val();
 
-        if (!serverIP || !serverPort || !rconPassword) {
+        if (!server_ip || !server_port || !rcon_password) {
           alert('All fields are required.');
           return; // Do not proceed with the request
         }
 
         // Create server data object
         const serverData = {
-          serverIP,
-          serverPort,
-          rconPassword,
+            server_ip,
+            server_port,
+            rcon_password,
         };
 
         // Make an API POST request to add the server
