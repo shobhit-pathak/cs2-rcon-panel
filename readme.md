@@ -5,6 +5,7 @@ A simple web panel to control CS2 servers via RCON
 ## Usage
 - Install NodeJS 18.0 or higher
 - Run `npm install` in the root project folder
+- Run `npm install -g nodemon` to install nodemon
 - Run `nodemon app.js` in the root project folder
 - Default login credentials can be changed from db.js
 
