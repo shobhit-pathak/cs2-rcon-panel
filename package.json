@@ -1,0 +1,24 @@
+{
+  "name": "cs2panel",
+  "version": "1.0.0",
+  "description": "RCON Web Panel to control CS2 Servers.",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "better-sqlite3": "^8.6.0",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "mongodb": "^6.1.0",
+    "rcon-srcds": "^2.0.2",
+    "sqlite3": "^5.1.6",
+    "srcds-rcon": "^2.2.1"
+  }
+}

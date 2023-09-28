@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSGO/CS2 Server Control Panel</title>
+    <!-- Add Bootstrap CSS CDN link -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background: linear-gradient(to bottom right, #3494E6, #EC6EAD);
+            font-family: Arial, sans-serif;
+            text-align: center;
+            color: #333;
+            height: 100vh; /* Set body height to 100% of viewport height */
+            margin: 0; /* Remove margin to fill the entire viewport */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h1 {
+            color: #fff;
+        }
+
+        form.server-setup-form {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
+        }
+
+        label {
+            font-size: 16px;
+        }
+
+        input[type="text"], select {
+            padding: 10px;
+            font-size: 16px;
+            width: 100%;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        /* Custom CSS for input and button side by side */
+        .input-group {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .input-group input[type="text"] {
+            width: 70%;
+            margin-bottom: 0px;
+            margin-right: 5px;
+        }
+
+        .input-group button {
+            width: 30%;
+        }
+
+        /* Custom CSS for action buttons */
+        .action-buttons button {
+            margin: 5px;
+        }
+    </style>
+    <link rel="stylesheet" href="/css/navbar.css">
+
+</head>
+<body>
+    <%- include('partials/navbar') %>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="mb-4"><%= hostname %> (<%= host %>:<%= port %>)</h1>
+                <form id="server_setup_form" class="server-setup-form">
+                    <div class="mb-3">
+                        <label for="team1" class="form-label">Team 1:</label>
+                        <input type="text" id="team1" name="team1" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="team2" class="form-label">Team 2:</label>
+                        <input type="text" id="team2" name="team2" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="map" class="form-label">Map:</label>
+                        <select id="selectedMap" name="map" class="form-select">
+                            <option value="de_inferno">de_inferno</option>
+                            <option value="de_mirage">de_mirage</option>
+                            <option value="de_dust2">de_dust2</option>
+                            <option value="de_overpass">de_overpass</option>
+                            <option value="de_ancient">de_ancient</option>
+                            <option value="de_anubis">de_anubis</option>
+                            <option value="de_nuke">de_nuke</option>
+                            <option value="de_vertigo">de_vertigo</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="gamemode" class="form-label">Gamemode:</label>
+                        <select id="game_mode" name="gamemode" class="form-select">
+                            <option value="1">Competitive</option>
+                            <option value="2">Wingman</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <button type="submit" name="action" value="pause" class="btn btn-primary">
+                            <svg viewBox="0 0 1024 1024" width="20" height="20" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="#ffffff"
+                                stroke="#ffffff">
+                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                <g id="SVGRepo_iconCarrier">
+                                    <path
+                                        d="M511.9 135.3L182.7 323.7v376.8l329.1 188.4L841 700.5V323.7L511.9 135.3z m256 522.8l-256 146.5-256-146.5v-292l256-146.5 256 146.5v292z"
+                                        fill="#ffffff"></path>
+                                    <path
+                                        d="M365.6 512.1c0 80.8 65.5 146.3 146.3 146.3 80.8 0 146.3-65.5 146.3-146.3 0-80.8-65.5-146.3-146.3-146.3-80.8 0-146.3 65.5-146.3 146.3z m219.4 0c0 40.3-32.8 73.1-73.1 73.1s-73.1-32.8-73.1-73.1 32.8-73.1 73.1-73.1 73.1 32.8 73.1 73.1z"
+                                        fill="#ffffff"></path>
+                                </g>
+                            </svg>
+                            Setup Game</button>
+                    </div>
+                </form>
+                <div class="mb-3 action-buttons">
+                    <button type="submit" id="pause_game" name="action" value="pause" class="btn btn-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pause" viewBox="0 0 16 16">
+                            <path d="M5 0a1 1 0 0 1 1 1v14a1 1 0 0 1-2 0V1a1 1 0 0 1 1-1z"/>
+                            <path d="M10 0a1 1 0 0 1 1 1v14a1 1 0 0 1-2 0V1a1 1 0 0 1 1-1z"/>
+                        </svg> Pause Game
+                    </button>
+                    <button type="submit" id="unpause_game" name="action" value="unpause" class="btn btn-success">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play" viewBox="0 0 16 16">
+                            <path d="M11.742 8.47 5.975 12.764a.5.5 0 0 1-.31.108H4a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h1.665a.5.5 0 0 1 .31.108l5.767 4.294a.5.5 0 0 1 0 .816z"/>
+                        </svg> Unpause Game
+                    </button>
+                    <button type="submit" id="restart_game" name="action" value="restart" class="btn btn-danger">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff">
+                            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                            <g id="SVGRepo_iconCarrier">
+                                <path
+                                    d="M12 2.99988C16.9706 2.99988 21 7.02931 21 11.9999C21 16.9704 16.9706 20.9999 12 20.9999C7.02944 20.9999 3 16.9704 3 11.9999C3 9.17261 4.30367 6.64983 6.34267 4.99988"
+                                    stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                                <path d="M3 4.49988H7V8.49988" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                </path>
+                            </g>
+                        </svg>
+                        Restart Game
+                    </button>
+                    <button type="submit" id="list_backups" name="action" class="btn btn-primary">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff">
+                            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                            <g id="SVGRepo_iconCarrier">
+                                <path
+                                    d="M8 6.00067L21 6.00139M8 12.0007L21 12.0015M8 18.0007L21 18.0015M3.5 6H3.51M3.5 12H3.51M3.5 18H3.51M4 6C4 6.27614 3.77614 6.5 3.5 6.5C3.22386 6.5 3 6.27614 3 6C3 5.72386 3.22386 5.5 3.5 5.5C3.77614 5.5 4 5.72386 4 6ZM4 12C4 12.2761 3.77614 12.5 3.5 12.5C3.22386 12.5 3 12.2761 3 12C3 11.7239 3.22386 11.5 3.5 11.5C3.77614 11.5 4 11.7239 4 12ZM4 18C4 18.2761 3.77614 18.5 3.5 18.5C3.22386 18.5 3 18.2761 3 18C3 17.7239 3.22386 17.5 3.5 17.5C3.77614 17.5 4 17.7239 4 18Z"
+                                    stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                            </g>
+                        </svg> List Backups
+                    </button>
+                    <button id="restore_backup" class="btn btn-primary">
+                        <svg fill="#ffffff" height="16" width="16" version="1.1" id="XMLID_107_" xmlns="http://www.w3.org/2000/svg"
+                            xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" xml:space="preserve" stroke="#ffffff">
+                            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                            <g id="SVGRepo_iconCarrier">
+                                <g id="folder-cycle">
+                                    <path d="M24,24h-5v-2h3V10H2v12h2v2H0V0h9.5l3,4H24V24z M2,8h20V6H11.5l-3-4H2V8z"></path>
+                                    <path
+                                        d="M18,12v5h-5l1.8-1.8C14.1,14.5,13.1,14,12,14c-2.2,0-4,1.8-4,4H6c0-3.3,2.7-6,6-6c1.6,0,3.1,0.7,4.2,1.8L18,12z M16,18 c0,2.2-1.8,4-4,4c-1.1,0-2.1-0.5-2.8-1.2L11,19H6v5l1.8-1.8C8.9,23.3,10.4,24,12,24c3.3,0,6-2.7,6-6H16z">
+                                    </path>
+                                </g>
+                            </g>
+                        </svg> Restore Backup
+                    </button>
+                    <button id="restore_latest_backup" class="btn btn-primary">
+                        <svg fill="#ffffff" height="16" width="16" version="1.1" id="XMLID_107_" xmlns="http://www.w3.org/2000/svg"
+                            xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" xml:space="preserve" stroke="#ffffff">
+                            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                            <g id="SVGRepo_iconCarrier">
+                                <g id="folder-cycle">
+                                    <path d="M24,24h-5v-2h3V10H2v12h2v2H0V0h9.5l3,4H24V24z M2,8h20V6H11.5l-3-4H2V8z"></path>
+                                    <path
+                                        d="M18,12v5h-5l1.8-1.8C14.1,14.5,13.1,14,12,14c-2.2,0-4,1.8-4,4H6c0-3.3,2.7-6,6-6c1.6,0,3.1,0.7,4.2,1.8L18,12z M16,18 c0,2.2-1.8,4-4,4c-1.1,0-2.1-0.5-2.8-1.2L11,19H6v5l1.8-1.8C8.9,23.3,10.4,24,12,24c3.3,0,6-2.7,6-6H16z">
+                                    </path>
+                                </g>
+                            </g>
+                        </svg> Restore Latest Round
+                    </button>
+                    <button type="submit" id="start_warmup" name="action" class="btn btn-success">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play-fill" viewBox="0 0 16 16">
+                            <path d="M11.742 8.47 5.975 12.764a.5.5 0 0 1-.31.108H4a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h1.665a.5.5 0 0 1 .31.108l5.767 4.294a.5.5 0 0 1 0 .816z"/>
+                        </svg> Start Warmup
+                    </button>
+                    <button type="submit" id="knife_start" name="action" class="btn btn-success">
+                        <svg height="16" width="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff">
+                            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                            <g id="SVGRepo_iconCarrier">
+                                <path
+                                    d="M14.7245 11.2754L16 12.4999L10.0129 17.8218C8.05054 19.5661 5.60528 20.6743 3 20.9999L3.79443 19.5435C4.6198 18.0303 5.03249 17.2737 5.50651 16.5582C5.92771 15.9224 6.38492 15.3113 6.87592 14.7278C7.42848 14.071 8.0378 13.4615 9.25644 12.2426L12 9.49822M11.5 8.99787L17.4497 3.04989C18.0698 2.42996 19.0281 2.3017 19.7894 2.73674C20.9027 3.37291 21.1064 4.89355 20.1997 5.80024L19.8415 6.15847C19.6228 6.3771 19.3263 6.49992 19.0171 6.49992H18L16 8.49992V8.67444C16 9.16362 16 9.40821 15.9447 9.63839C15.8957 9.84246 15.8149 10.0375 15.7053 10.2165C15.5816 10.4183 15.4086 10.5913 15.0627 10.9372L14.2501 11.7498L11.5 8.99787Z"
+                                    stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                            </g>
+                        </svg> Start Knife Round
+                    </button>
+                    <button type="submit" id="swap_team" name="action" class="btn btn-success">
+                        <svg viewBox="0 0 24 24" fill="none" width="16" height="16" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff">
+                            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                            <g id="SVGRepo_iconCarrier">
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                    d="M16 3.93a.75.75 0 0 1 1.177-.617l4.432 3.069a.75.75 0 0 1 0 1.233l-4.432 3.069A.75.75 0 0 1 16 10.067V8H4a1 1 0 0 1 0-2h12V3.93zm-9.177 9.383A.75.75 0 0 1 8 13.93V16h12a1 1 0 1 1 0 2H8v2.067a.75.75 0 0 1-1.177.617l-4.432-3.069a.75.75 0 0 1 0-1.233l4.432-3.069z"
+                                    fill="#ffffff"></path>
+                            </g>
+                        </svg> Swap Teams
+                    </button>
+                    <button type="submit" id="go_live" name="action" class="btn btn-success">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play-fill" viewBox="0 0 16 16">
+                            <path d="M11.742 8.47 5.975 12.764a.5.5 0 0 1-.31.108H4a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h1.665a.5.5 0 0 1 .31.108l5.767 4.294a.5.5 0 0 1 0 .816z"/>
+                        </svg> Go Live
+                    </button>
+                </div>
+                <div class="input-group mb-3">
+                    <input type="text" id="rconInput" name="sayInput" class="form-control" placeholder="Send RCON command to server" required style="flex: 2;">
+                    <button type="submit" id="rconInputBtn" class="btn btn-primary" style="flex: 1;">
+                        Send
+                        <svg viewBox="0 0 24 24" fill="none" width="16" height="16" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff">
+                            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                            <g id="SVGRepo_iconCarrier">
+                                <path
+                                    d="M11.5003 12H5.41872M5.24634 12.7972L4.24158 15.7986C3.69128 17.4424 3.41613 18.2643 3.61359 18.7704C3.78506 19.21 4.15335 19.5432 4.6078 19.6701C5.13111 19.8161 5.92151 19.4604 7.50231 18.7491L17.6367 14.1886C19.1797 13.4942 19.9512 13.1471 20.1896 12.6648C20.3968 12.2458 20.3968 11.7541 20.1896 11.3351C19.9512 10.8529 19.1797 10.5057 17.6367 9.81135L7.48483 5.24303C5.90879 4.53382 5.12078 4.17921 4.59799 4.32468C4.14397 4.45101 3.77572 4.78336 3.60365 5.22209C3.40551 5.72728 3.67772 6.54741 4.22215 8.18767L5.24829 11.2793C5.34179 11.561 5.38855 11.7019 5.407 11.8459C5.42338 11.9738 5.42321 12.1032 5.40651 12.231C5.38768 12.375 5.34057 12.5157 5.24634 12.7972Z"
+                                    stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                            </g>
+                        </svg>
+                    </button>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <!-- Include Bootstrap JS and jQuery CDN links -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <script src="/js/console.js"></script>
+    <script>
+        window.server_id = '<%= server_id %>';
+    </script>
+</body>
+</html>

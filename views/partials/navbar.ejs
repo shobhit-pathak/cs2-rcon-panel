@@ -1,0 +1,23 @@
+<nav class="navbar navbar-expand-lg custom-navbar">
+    <div class="container">
+        <a class="navbar-brand" href="/servers">CS2Panel</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/servers">All Servers</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/add-server">Add Server</a>
+                </li>
+            </ul>
+        </div>
+        <div class="ml-auto">
+            <form action="/auth/logout" method="post">
+                <button type="submit" class="btn logout-btn text-white">Logout</button>
+            </form>
+        </div>
+    </div>
+</nav>

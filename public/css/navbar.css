@@ -1,0 +1,26 @@
+.custom-navbar {
+    background: linear-gradient(to bottom right, #3494E6, #EC6EAD, #3494E6);
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.custom-navbar .navbar-brand {
+    color: #fff;
+    font-weight: bold;
+}
+
+.custom-navbar .navbar-toggler-icon {
+    background-color: #fff;
+}
+
+.custom-navbar .navbar-nav .nav-link {
+    color: #fff;
+    transition: color 0.3s;
+}
+
+.custom-navbar .navbar-nav .nav-link:hover {
+    color: #f39c12;
+}
+
+.logout-btn {
+    margin: 0px;
+}
