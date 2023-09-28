@@ -65,7 +65,7 @@ class RconManager {
 
     async disconnect_rcon(server_id) {
         console.log('starting disconnect', server_id)
-        if (!this.rcons[server_id].connected) {
+        if ( !(server_id in this.rcons) || (!this.rcons[server_id].connected)) {
             return Promise.resolve();
         }
     

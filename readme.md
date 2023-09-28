@@ -21,7 +21,7 @@ A simple web panel to control CS2 servers via RCON
 - Add teams and players
 - Add password option while setting up the server
 - Improve UX/UI
-- Improve/clean code
+- Improve/clean code (This is my first time working with node :P)
 - Create executable 
 
 ## Limitations
