@@ -24,7 +24,7 @@ router.post('/api/setup-game', is_authenticated, async (req, res) => {
             execute_cfg_on_server(server_id, './cfg/live_wingman.cfg');
         }
         rcon.rcons[server_id].execute(`mp_warmup_pausetimer 1`);
-        rcon.rcons[server_id].execute(`map ${selected_map}`);
+        rcon.rcons[server_id].execute(`changelevel ${selected_map}`);
 
         // Adding 1 second delay in executing warmup.cfg to make it effective after map has been changed.
         setTimeout(() => {
