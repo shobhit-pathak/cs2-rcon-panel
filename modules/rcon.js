@@ -26,6 +26,24 @@ class RconManager {
         }
     }
 
+    async send_heartbeat(server_id, server) {
+        try {
+            const status_promise = this.rcons[server_id].execute(`status`);
+            
+            const timeout_promise = new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    reject(Error('Timeout - status command not received within 5 seconds'));
+                }, 5000); // 5 seconds timeout
+            });
+            let status = await Promise.race([status_promise, timeout_promise]);
+            console.log("HEARTBEAT RESPONSE:", status)
+        } catch (error) {
+            console.log("Error in connecting to the server, reconnecting.....");
+            await this.disconnect_rcon(server_id);
+            await this.connect(server_id, server);
+        }
+    }
+
     async connect(server_id, server) {
         let rcon_connection = null;
         rcon_connection = new Rcon({ host: server.serverIP, port: server.serverPort, timeout: 5000 });
@@ -51,6 +69,8 @@ class RconManager {
             console.error('RCON Authentication failed', server_id, error);
             // Handle the authentication error here as needed.
         }
+
+        setInterval(async () => this.send_heartbeat(server_id, server), 5000);
         
         this.rcons[server_id] = rcon_connection;
         this.details[server_id] = {
