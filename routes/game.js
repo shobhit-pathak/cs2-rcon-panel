@@ -233,24 +233,66 @@ function check_whitelisted_players() {
         .catch(console.error);
 }
 
-function execute_cfg_on_server(server_id, cfg_path) {
-    const fileStream = fs.createReadStream(cfg_path, 'utf-8');
-    const rl = readline.createInterface({
-        input: fileStream,
-        terminal: false
-    });
 
-    rl.on('line', (line) => {
-        try {
-            console.log(`Line from file: ${line}`);
-            rcon.rcons[server_id].execute(line);
-        } catch (error) {
-            console.log(`Error in executing line ${line}, Error: ${error}`);
+function splitByByteLength(data, length) {
+    const lines = data;
+    const exportedLines = [];
+    const lineEndChar = '; '
+    let index = 0;
+
+    for(let item = 0; item < lines.length; item++) {
+        if(typeof exportedLines[index] === "undefined") {
+            exportedLines[index] = "";
         }
-    });
 
-    rl.on('close', () => {
-        console.log('File reading completed.');
+        const lineFormatted = `${lines[item]}${lineEndChar}`;
+        const lineBytes = Buffer.byteLength(lineFormatted, 'utf8');
+        const bufferBytes = Buffer.byteLength(exportedLines[index], 'utf8');
+
+        if((bufferBytes + lineBytes) < length) {
+            exportedLines[index] += lineFormatted;
+        } else {
+            index++;
+        }
+    }
+
+    return exportedLines;
+}   
+
+function execute_cfg_on_server(server_id, cfg_path) {
+
+    fs.readFile(cfg_path, 'utf8', (err, data) => {
+        if (err) {
+            throw err;
+        }
+
+        data = data.replace(/^\/\/.*$/m, '');
+        data = data.split("\n");
+        const new_data = [];
+        for (let i = 0; i < data.length; i += 1) {
+            const line = data[i].trim();
+            const segments = line.split(' ');
+
+            if(segments[0] === 'say' || segments.length == 1) {
+                new_data.push(line);
+            } else if (segments[0] !== '' && segments[0] !== '//') {
+                new_data.push(`${segments[0]} ${segments[1].split('\t')[0]}`);
+            }
+        }
+        const exported_lines = splitByByteLength(data, 512)
+
+        function execute_next_item(item) {
+            if (item < exported_lines.length) {
+                console.log(exported_lines[item]);
+                rcon.rcons[server_id].execute(exported_lines[item]);
+    
+                // Wait for 200ms before moving to the next iteration
+                setTimeout(() => {
+                    execute_next_item(item + 1);
+                }, 200);
+            }
+        }
+        execute_next_item(0);
     });
 }
 

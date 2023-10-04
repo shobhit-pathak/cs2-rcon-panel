@@ -19,7 +19,7 @@ class RconManager {
             for (const server of servers) {
                 const server_id = server.id.toString();
                 if (server_id in this.rcons) continue;
-                await this.connect(server_id, server)
+                await this.connect(server_id, server);
             }
         } catch (error) {
             console.error('Error connecting to MongoDB:', error);
@@ -27,6 +27,11 @@ class RconManager {
     }
 
     async send_heartbeat(server_id, server) {
+        if (!this.rcons[server_id].connection.writable) {
+            console.log("Connection unwritable, reconnecting...")
+            await this.disconnect_rcon(server_id);
+            await this.connect(server_id, server);
+        }
         try {
             const status_promise = this.rcons[server_id].execute(`status`);
             
@@ -36,9 +41,9 @@ class RconManager {
                 }, 5000); // 5 seconds timeout
             });
             let status = await Promise.race([status_promise, timeout_promise]);
-            console.log("HEARTBEAT RESPONSE:", status)
+            console.log("HEARTBEAT SUCCESS", server_id)
         } catch (error) {
-            console.log("Error in connecting to the server, reconnecting.....");
+            console.log("Error in connecting to the server, reconnecting..... ERROR:", error);
             await this.disconnect_rcon(server_id);
             await this.connect(server_id, server);
         }
@@ -69,8 +74,6 @@ class RconManager {
             console.error('RCON Authentication failed', server_id, error);
             // Handle the authentication error here as needed.
         }
-
-        setInterval(async () => this.send_heartbeat(server_id, server), 5000);
         
         this.rcons[server_id] = rcon_connection;
         this.details[server_id] = {
@@ -80,6 +83,7 @@ class RconManager {
             connected: rcon_connection.isConnected(),
             authenticated: rcon_connection.isAuthenticated()
         };
+        this.details[server_id].heartbeat_interval = setInterval(async () => this.send_heartbeat(server_id, server), 5000);
         return;
     }
 
@@ -88,7 +92,7 @@ class RconManager {
         if ( !(server_id in this.rcons) || (!this.rcons[server_id].connected)) {
             return Promise.resolve();
         }
-    
+        clearInterval(this.details[server_id].heartbeat_interval)
         this.rcons[server_id].authenticated = false;
         this.rcons[server_id].connected = false;
     
@@ -103,6 +107,7 @@ class RconManager {
             });
     
             this.rcons[server_id].connection.end(); // Close the socket gracefully
+            console.log("Disconnected", server_id)
         });
     }
 }
