@@ -107,7 +107,17 @@ $(document).ready(function () {
             if (response.ok) {
                 const data = await response.json();
                 console.log(data.message)
-                alert(data.message);
+                if(apiEndpoint == '/api/rcon') {
+                    if (data.message.includes("Response received")) {
+                        $('#rconResultBox').show();
+                        $('#rconResultText').text(data.message.split("Command sent! Response received:")[1]);
+                    } else {
+                        $('#rconResultBox').hide();
+                        alert(data.message);
+                    }
+                } else {
+                    alert(data.message);
+                }
             } else if (response.status == 401) {
                 alert('Unauthorized, please reload and relogin.');
             } 
