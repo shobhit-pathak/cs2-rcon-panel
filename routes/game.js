@@ -282,14 +282,18 @@ function execute_cfg_on_server(server_id, cfg_path) {
         const exported_lines = splitByByteLength(data, 512)
 
         function execute_next_item(item) {
-            if (item < exported_lines.length) {
-                console.log(exported_lines[item]);
-                rcon.rcons[server_id].execute(exported_lines[item]);
-    
-                // Wait for 200ms before moving to the next iteration
-                setTimeout(() => {
-                    execute_next_item(item + 1);
-                }, 200);
+            try {
+                if (item < exported_lines.length) {
+                    console.log(exported_lines[item]);
+                    rcon.rcons[server_id].execute(exported_lines[item]);
+        
+                    // Wait for 200ms before moving to the next iteration
+                    setTimeout(() => {
+                        execute_next_item(item + 1);
+                    }, 200);
+                }
+            } catch (error) {
+                console.log("[execute_next_item] Error:", error)
             }
         }
         execute_next_item(0);

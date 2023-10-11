@@ -50,41 +50,46 @@ class RconManager {
     }
 
     async connect(server_id, server) {
-        let rcon_connection = null;
-        rcon_connection = new Rcon({ host: server.serverIP, port: server.serverPort, timeout: 5000 });
-        console.log("CONNECTING RCON", server_id, server.serverIP, server.serverPort);
-
-        // Set a timeout for the authentication process
-        const authenticationTimeout = setTimeout(async () => {
-            console.error('RCON Authentication timed out', server_id);
-            try {
-                await this.disconnect_rcon(server_id); // Disconnect the RCON connection
-                console.log('Timed out, disconnected RCON', server_id);
-            } catch (error) {
-                console.error('Error disconnecting RCON', server_id, error);
-            }
-        }, 10000);
-    
         try {
-            await rcon_connection.authenticate(server.rconPassword);
-            clearTimeout(authenticationTimeout);
-            console.log('RCON Authenticated', server_id, server.serverIP, server.serverPort);
-        } catch (error) {
-            clearTimeout(authenticationTimeout);
-            console.error('RCON Authentication failed', server_id, error);
-            // Handle the authentication error here as needed.
-        }
+            let rcon_connection = null;
+            rcon_connection = new Rcon({ host: server.serverIP, port: server.serverPort, timeout: 5000 });
+            console.log("CONNECTING RCON", server_id, server.serverIP, server.serverPort);
+    
+            // Set a timeout for the authentication process
+            const authenticationTimeout = setTimeout(async () => {
+                console.error('RCON Authentication timed out', server_id);
+                try {
+                    await this.disconnect_rcon(server_id); // Disconnect the RCON connection
+                    console.log('Timed out, disconnected RCON', server_id);
+                } catch (error) {
+                    console.error('Error disconnecting RCON', server_id, error);
+                }
+            }, 10000);
         
-        this.rcons[server_id] = rcon_connection;
-        this.details[server_id] = {
-            host: server.serverIP,
-            port: server.serverPort,
-            rcon_password: server.rconPassword,
-            connected: rcon_connection.isConnected(),
-            authenticated: rcon_connection.isAuthenticated()
-        };
-        this.details[server_id].heartbeat_interval = setInterval(async () => this.send_heartbeat(server_id, server), 5000);
-        return;
+            try {
+                await rcon_connection.authenticate(server.rconPassword);
+                clearTimeout(authenticationTimeout);
+                console.log('RCON Authenticated', server_id, server.serverIP, server.serverPort);
+            } catch (error) {
+                clearTimeout(authenticationTimeout);
+                console.error('RCON Authentication failed', server_id, error);
+            }
+            
+            this.rcons[server_id] = rcon_connection;
+            this.details[server_id] = {
+                host: server.serverIP,
+                port: server.serverPort,
+                rcon_password: server.rconPassword,
+                connected: rcon_connection.isConnected(),
+                authenticated: rcon_connection.isAuthenticated()
+            };
+            if (rcon_connection.isConnected() && rcon_connection.isAuthenticated()) {
+                this.details[server_id].heartbeat_interval = setInterval(async () => this.send_heartbeat(server_id, server), 5000);
+            }
+            return;
+        }  catch (error) {
+            console.error('[CONNECTION ERROR]', error);
+        }
     }
 
     async disconnect_rcon(server_id) {
