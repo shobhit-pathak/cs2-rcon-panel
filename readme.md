@@ -23,7 +23,11 @@ A simple web panel to control CS2 servers via RCON
 - Add password option while setting up the server
 - Improve UX/UI
 - Improve/clean code (This is my first time working with node :P)
-- Create executable 
+- Create executable
+
+## Screenshot
+
+![Screenshot](https://github.com/shobhit-pathak/cs2-rcon-panel/blob/master/panel_screenshot.PNG)
 
 ## Limitations
 
