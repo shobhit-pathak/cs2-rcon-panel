@@ -6,6 +6,7 @@ class RconManager {
     constructor() {
         this.rcons = {};
         this.details = {};
+        this.servers = {};
         this.init();
     }
 
@@ -19,10 +20,54 @@ class RconManager {
             for (const server of servers) {
                 const server_id = server.id.toString();
                 if (server_id in this.rcons) continue;
+                this.servers[server_id] = server;
                 await this.connect(server_id, server);
             }
         } catch (error) {
             console.error('Error connecting to MongoDB:', error);
+        }
+    }
+
+    async execute_command(server_id, command) {
+        try {
+            let rcon_connection = this.rcons[server_id];
+            let server = this.servers[server_id];
+            if (!rcon_connection.isConnected() || !rcon_connection.isAuthenticated() || !rcon_connection.connection.writable) {
+                console.log("Connection issue detected, reconnecting to the server:", server_id)
+                await this.disconnect_rcon(server_id);
+                await this.connect(server_id, server);
+            }
+            rcon_connection = this.rcons[server_id];
+            if (rcon_connection.isConnected() && rcon_connection.isAuthenticated() && rcon_connection.connection.writable) {
+                const executePromise = new Promise(async (resolve, reject) => {
+                    try {
+                        const response = await Promise.race([
+                            rcon_connection.execute(command),
+                            new Promise((resolve, reject) => {
+                                setTimeout(() => {
+                                    resolve({ error: 'Command execution timed out' });
+                                }, 200); // 200ms timeout
+                            }),
+                        ]);
+                        resolve(response);
+                    } catch (error) {
+                        reject(error);
+                    }
+                });
+
+                const response = await executePromise;
+
+                if (response.error) {
+                    return 200;
+                }
+                return response.toString();
+            } else {
+                console.log(`Unable to establish connection to the server id: ${server_id}, cannot execute command: ${command}`)
+                return 400
+            }
+        } catch (error) {
+            console.error('Error in execute_command:', error);
+            return 400
         }
     }
 

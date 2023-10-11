@@ -108,7 +108,10 @@ $(document).ready(function () {
                 const data = await response.json();
                 console.log(data.message)
                 alert(data.message);
-            } else {
+            } else if (response.status == 401) {
+                alert('Unauthorized, please reload and relogin.');
+            } 
+            else {
                 alert('Failed to perform the action');
             }
         } catch (error) {
@@ -118,31 +121,45 @@ $(document).ready(function () {
     }
 
     $('#pause_game').on('click', function () {
-        send_post_request('/api/pause');
+        if (confirm("Are you sure you want to pause the game?")) {
+            send_post_request('/api/pause');
+        }
     });
-
+    
     $('#unpause_game').on('click', function () {
-        send_post_request('/api/unpause');
+        if (confirm("Are you sure you want to unpause the game?")) {
+            send_post_request('/api/unpause');
+        }
     });
-
+    
     $('#restart_game').on('click', function () {
-        send_post_request('/api/restart');
+        if (confirm("Are you sure you want to restart the game?")) {
+            send_post_request('/api/restart');
+        }
     });
-
+    
     $('#start_warmup').on('click', function () {
-        send_post_request('/api/start-warmup');
+        if (confirm("Are you sure you want to start the warm-up?")) {
+            send_post_request('/api/start-warmup');
+        }
     });
-
+    
     $('#knife_start').on('click', function () {
-        send_post_request('/api/start-knife');
+        if (confirm("Are you sure you want to start the knife round?")) {
+            send_post_request('/api/start-knife');
+        }
     });
-
+    
     $('#swap_team').on('click', function () {
-        send_post_request('/api/swap-team');
+        if (confirm("Are you sure you want to swap teams?")) {
+            send_post_request('/api/swap-team');
+        }
     });
-
+    
     $('#go_live').on('click', function () {
-        send_post_request('/api/go-live');
+        if (confirm("Are you sure you want to go live?")) {
+            send_post_request('/api/go-live');
+        }
     });
 
     $('#rconInputBtn').on('click', function () {
@@ -153,12 +170,22 @@ $(document).ready(function () {
         $('#rconInput').val('');
     });
 
+    $('#say_input_btn').on('click', function () {
+        let data = {
+            message: $('#say_input').val()
+        };
+        send_post_request('/api/say-admin', data);
+        $('#say_input').val('');
+    });
+
     $('#list_backups').on('click', function () {
         send_post_request('/api/list-backups');
     });
 
     $('#restore_latest_backup').on('click', function () {
-        send_post_request('/api/restore-latest-backup');
+        if (confirm("Are you sure you want to restore the latest round backup?")) {
+            send_post_request('/api/restore-latest-backup');
+        }
     });
 
     $('#restore_backup').on('click', function () {

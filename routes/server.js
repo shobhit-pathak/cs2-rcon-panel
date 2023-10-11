@@ -26,7 +26,8 @@ router.get('/manage/:server_id', is_authenticated, async (req, res) => {
             return res.status(404).send('Server not found');
         }
 
-        const response = await rcon.rcons[server_id].execute('hostname');
+        // const response = await rcon.rcons[server_id].execute('hostname');
+        const response = await rcon.execute_command(server_id, "hostname");
         const hostname = response.toString().split("=")[1].trim();
         const host = rcon.details[server_id].host;
         const port = rcon.details[server_id].port;
@@ -71,11 +72,14 @@ router.get('/api/servers', is_authenticated, async (req, res) => {
             let hostname = "-";
 
             if (server_id in rcon.rcons) {
-                servers[i].connected = rcon.rcons[server_id].isConnected();
-                servers[i].authenticated = rcon.rcons[server_id].isAuthenticated();
+                // servers[i].connected = rcon.rcons[server_id].isConnected();
+                // servers[i].authenticated = rcon.rcons[server_id].isAuthenticated();
+                servers[i].connected = true;
+                servers[i].authenticated = true;
 
                 if (servers[i].connected && servers[i].authenticated) {
-                    const response = await rcon.rcons[server_id].execute('hostname');
+                    const response = await rcon.execute_command(server_id, "hostname");
+                    // const response = await rcon.rcons[server_id].execute('hostname');
                     hostname = response.toString().split("=")[1].trim();
                 }
             } else {
