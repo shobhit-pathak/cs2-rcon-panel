@@ -2,11 +2,17 @@
 
 A simple web panel to control CS2 servers via RCON
 
-## Usage
+## Usage (Without Docker)
 - Install NodeJS 18.0 or higher
 - Run `npm install` in the root project folder
 - Run `npm install -g nodemon` to install nodemon
 - Run `nodemon app.js` in the root project folder
+- Default login credentials can be changed from db.js
+
+## Usage (Using Docker)
+- Run `docker-compose build` to build the image
+- Run `docker-compose up` to start the container
+- Navigate to localhost:3000 to start using the panel
 - Default login credentials can be changed from db.js
 
 ## Abilities 
